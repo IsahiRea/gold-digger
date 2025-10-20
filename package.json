@@ -1,0 +1,21 @@
+{
+  "name": "gold-digger",
+  "version": "1.0.0",
+  "description": "Live Feed of Gold Prices",
+  "homepage": "https://github.com/IsahiRea/gold-digger#readme",
+  "bugs": {
+    "url": "https://github.com/IsahiRea/gold-digger/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IsahiRea/gold-digger.git"
+  },
+  "license": "ISC",
+  "author": "Cesar I. Rea",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  }
+}
