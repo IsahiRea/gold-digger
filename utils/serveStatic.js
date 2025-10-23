@@ -3,23 +3,24 @@ import path from 'node:path'
 import { sendResponse } from './sendResponse.js'
 import { getContentType } from './getContentType.js'
 
-export async function serveStatic(res, baseDir) {
+export async function serveStatic(req, res, baseDir) {
+
     const publicDir = path.join(baseDir, 'public')
     const pathToResource = path.join(
         publicDir,
-        req.url === '/' ? 'index.html' : req.url)
+        req.url === '/' ? 'index.html' : req.url
+    )
+    const ext = path.extname(pathToResource)
+    const contentType = getContentType(ext)
+
     try { 
         const content = await fs.readFile(pathToResource)
-        const ext = path.extname(filePath)
-        const contentType = getContentType(ext)
-        return sendResponse(res, 200, contentType, content)
-        // return sendResponse(res, 200, getContentType(filePath), content)
+        sendResponse(res, 200, contentType, content)
     } catch (error) {
         if (error.code === 'ENOENT') {
             try {
-                    const notFoundPath = path.join(publicDir, '404.html')
-                    const notFoundContent = await fs.readFile(notFoundPath)
-                    return sendResponse(res, 404, 'text/html', notFoundContent)
+                const content = await fs.readFile(path.join(publicDir, '404.html'))
+                return sendResponse(res, 404, 'text/html', content)
             } catch {
                 console.log(error)
             }

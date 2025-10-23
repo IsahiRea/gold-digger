@@ -1,14 +1,16 @@
 import http from 'node:http'
 import { serveStatic } from './utils/serveStatic.js';
 
+
 const PORT = process.env.PORT || 8080;
-const baseDir = import.meta.dirname
+const __dirname = import.meta.dirname
 
 const server = http.createServer(async (req, res) => {
 
-  if(req.method === 'GET' && req.url === '/') {
-    return await serveStatic(res, baseDir)
+  if(!req.url.startsWith('/api') ) {
+    return await serveStatic(req, res, __dirname)
   }
+
 })
 
 server.listen(PORT, () => {
