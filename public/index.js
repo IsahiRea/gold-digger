@@ -71,7 +71,7 @@ function calculateGoldPurchase(investmentAmount) {
 }
 
 // Handle form submission
-function handleInvestment(event) {
+async function handleInvestment(event) {
   event.preventDefault();
 
   const investmentAmount = parseFloat(investmentAmountInput.value);
@@ -88,15 +88,37 @@ function handleInvestment(event) {
 
   try {
     const ounces = calculateGoldPurchase(investmentAmount);
-    showPurchaseSummary(ounces, investmentAmount);
+
+    // Send purchase to server
+    const response = await fetch('/api/purchase', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        investmentAmount: investmentAmount,
+        goldOunces: ounces,
+        priceAtPurchase: currentGoldPrice,
+      }),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok || !result.success) {
+      alert('Purchase failed: ' + (result.error || 'Unknown error'));
+      return;
+    }
+
+    // Show success dialog with purchase ID
+    showPurchaseSummary(ounces, investmentAmount, result.purchase.id);
   } catch (error) {
-    alert('Unable to calculate purchase: ' + error.message);
+    alert('Unable to process purchase: ' + error.message);
   }
 }
 
 // Show purchase summary dialog
-function showPurchaseSummary(ounces, amount) {
-  dialogSummary.textContent = `You just bought ${ounces.toFixed(2)} ounces (ozt) for £${amount.toFixed(2)}. You will receive documentation shortly.`;
+function showPurchaseSummary(ounces, amount, purchaseId) {
+  dialogSummary.textContent = `You just bought ${ounces.toFixed(2)} ounces (ozt) for £${amount.toFixed(2)}.\n\nReference: ${purchaseId}\n\nYou will receive documentation shortly.`;
   dialog.showModal();
 }
 
